@@ -54,7 +54,7 @@ class Redis:
         with await self.pool as conn:
             key = self.gen_key(key)
             if ttl:
-                return await conn.execute('SETEX', key, val, ttl)
+                return await conn.execute('SETEX', key, ttl, val)
             else:
                 return await conn.execute('SET', key, val)
 
