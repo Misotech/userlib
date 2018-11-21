@@ -23,7 +23,7 @@ setup(
     ],
     packages=find_packages(exclude=['examples', 'docs', 'tests*']),
 
-    install_requires=['aiohttp>=3.0.0'],
+    install_requires=['aiohttp>=3.0.0', 'ujson'],
     # setup_requires=['pytest-runner', 'flake8'],
     # tests_require=['pytest', 'testfixtures']
 )

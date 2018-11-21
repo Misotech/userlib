@@ -1,7 +1,8 @@
 from band import logger, redis_factory
+from typing import Dict
+import ujson
 
-
-def pairs(l):
+def decode_dict(l):
     """
     Convert list to pairs
     """
@@ -9,6 +10,12 @@ def pairs(l):
         # Create an index range for l of n items:
         yield (*l[i:i+2],)
 
+def encode_dict(dict_: Dict):
+    flat = []
+    for k, v in dict_.items():
+        flat.append(k)
+        flat.append(ujson.dumps(v))
+    return flat
 
 class Redis:
     def __init__(self, prefix=None):
@@ -18,6 +25,11 @@ class Redis:
     async def initialize(self):
         self.pool = await redis_factory.create_pool()
 
+    async def unload(self):
+        if self.pool:
+            self.pool.close()
+            await self.pool.wait_closed()
+
     def gen_key(self, key):
         return f'{self.prefix}{key}'
 
@@ -26,7 +38,6 @@ class Redis:
             return True
         logger.warn('redis pool not ready')
         return False
-
 
     async def get(self, key):
         if not self.check_ready():
@@ -46,13 +57,6 @@ class Redis:
                 return await conn.execute('SETEX', key, val, ttl)
             else:
                 return await conn.execute('SET', key, val)
-
-    async def hmset(self, key, *items):
-        if not self.check_ready():
-            return
-        with await self.pool as conn:
-            key = self.gen_key(key)
-            return await conn.execute('HMSET', key, *items)
 
     async def delete(self, key):
         if not self.check_ready():
@@ -79,6 +83,13 @@ class Redis:
             key = self.gen_key(key)
             return await conn.execute('EXPIRE', key, seconds)
 
+    async def hmset(self, key, *items):
+        if not self.check_ready():
+            return
+        with await self.pool as conn:
+            key = self.gen_key(key)
+            return await conn.execute('HMSET', key, *items)
+
     async def hmgetall(self, key):
         if not self.check_ready():
             return
@@ -88,4 +99,4 @@ class Redis:
             return [(
                 k.decode(),
                 v.decode(),
-            ) for k, v in pairs(matches or [])]
+            ) for k, v in decode_dict(matches or [])]
