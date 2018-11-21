@@ -2,20 +2,22 @@ from band import logger, redis_factory
 from typing import Dict
 import ujson
 
-def decode_dict(l):
+
+def decode_dict(lst):
     """
     Convert list to pairs
     """
-    for i in range(0, len(l), 2):
-        # Create an index range for l of n items:
-        yield (*l[i:i+2],)
+    for i in range(0, len(lst), 2):
+        yield (* lst[i:i + 2], )
 
-def encode_dict(dict_: Dict):
+
+def encode_dict(dct: Dict):
     flat = []
-    for k, v in dict_.items():
+    for k, v in dct.items():
         flat.append(k)
         flat.append(ujson.dumps(v))
     return flat
+
 
 class Redis:
     def __init__(self, prefix=None):
