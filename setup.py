@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='userlib',
-    version='0.2.0',
+    version='0.3.0',
     description='Rockstat user library',
     url='http://rock.st',
 
