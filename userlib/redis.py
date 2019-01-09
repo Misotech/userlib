@@ -91,6 +91,13 @@ class Redis:
             key = self._gen_key(key)
             return await conn.execute('EXPIRE', key, seconds)
 
+    async def ttl(self, key):
+        if not self._check_ready():
+            return
+        with await self.pool as conn:
+            key = self._gen_key(key)
+            return await conn.execute('TTL', key)
+
     async def hmset(self, key, *items):
         if not self._check_ready():
             return
