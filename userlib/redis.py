@@ -32,46 +32,52 @@ class Redis:
             self.pool.close()
             await self.pool.wait_closed()
 
-    def gen_key(self, key):
+    def _gen_key(self, key):
         return f'{self.prefix}{key}'
 
-    def check_ready(self):
+    def _check_ready(self):
         if self.pool:
             return True
         logger.warn('redis pool not ready')
-        return False
 
-    async def get(self, key):
-        if not self.check_ready():
+    async def exists(self, key):
+        if not self._check_ready():
             return
         with await self.pool as conn:
-            key = self.gen_key(key)
+            key = self._gen_key(key)
+            return await conn.execute('EXISTS', key)
+
+    async def get(self, key):
+        if not self._check_ready():
+            return
+        with await self.pool as conn:
+            key = self._gen_key(key)
             stored = await conn.execute('GET', key)
             if stored:
                 return stored.decode()
 
     async def set(self, key, val, ttl=None):
-        if not self.check_ready():
+        if not self._check_ready():
             return
         with await self.pool as conn:
-            key = self.gen_key(key)
+            key = self._gen_key(key)
             if ttl:
                 return await conn.execute('SETEX', key, ttl, val)
             else:
                 return await conn.execute('SET', key, val)
 
     async def delete(self, key):
-        if not self.check_ready():
+        if not self._check_ready():
             return
         with await self.pool as conn:
-            key = self.gen_key(key)
+            key = self._gen_key(key)
             return await conn.execute('DEL', key)
 
     async def increx(self, key, seconds):
-        if not self.check_ready():
+        if not self._check_ready():
             return
         with await self.pool as conn:
-            key = self.gen_key(key)
+            key = self._gen_key(key)
             value = await conn.execute('INCR', key)
             if value:
                 if value == 1:
@@ -79,24 +85,24 @@ class Redis:
                 return value
 
     async def expire(self, key, seconds):
-        if not self.check_ready():
+        if not self._check_ready():
             return
         with await self.pool as conn:
-            key = self.gen_key(key)
+            key = self._gen_key(key)
             return await conn.execute('EXPIRE', key, seconds)
 
     async def hmset(self, key, *items):
-        if not self.check_ready():
+        if not self._check_ready():
             return
         with await self.pool as conn:
-            key = self.gen_key(key)
+            key = self._gen_key(key)
             return await conn.execute('HMSET', key, *items)
 
     async def hmgetall(self, key):
-        if not self.check_ready():
+        if not self._check_ready():
             return
         with await self.pool as conn:
-            key = self.gen_key(key)
+            key = self._gen_key(key)
             matches = await conn.execute('HGETALL', key)
             return [(
                 k.decode(),
