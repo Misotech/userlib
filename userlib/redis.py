@@ -66,6 +66,13 @@ class Redis:
             else:
                 return await conn.execute('SET', key, val)
 
+    async def hset(self, key, field, val):
+        if not self._check_ready():
+            return
+        with await self.pool as conn:
+            key = self._gen_key(key)
+            return await conn.execute('HSET', key, field, val)
+
     async def delete(self, key):
         if not self._check_ready():
             return
