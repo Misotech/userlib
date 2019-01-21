@@ -12,14 +12,14 @@ JSK = ['nonce', 'header', 'ciphertext', 'tag']
 
 
 class Crypter:
-    def __init__(self, token, header='wtf'):
+    def __init__(self, token, header='re'):
         self.token = token
         self.header = header.encode()
 
     def encode(self, msg):
-        data = ujson.dumps(msg)
+        data = ujson.dumps(msg).encode()
 
-        cipher = AES.new(self.key, AES.MODE_EAX)
+        cipher = AES.new(self.token, AES.MODE_EAX)
         cipher.update(self.header)
         ciphertext, tag = cipher.encrypt_and_digest(data)
 
@@ -28,7 +28,7 @@ class Crypter:
     def decode(self, str):
 
         obj = dict(zip(JSK, [b58decode(x) for x in str.split('.')]))
-        cipher = AES.new(self.key, AES.MODE_EAX, nonce=obj['nonce'])
+        cipher = AES.new(self.token, AES.MODE_EAX, nonce=obj['nonce'])
         cipher.update(obj['header'])
         plaintext = cipher.decrypt(obj['ciphertext'])
 
