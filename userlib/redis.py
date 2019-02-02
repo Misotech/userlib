@@ -56,6 +56,15 @@ class Redis:
             if stored:
                 return stored.decode()
 
+    async def incr(self, key):
+        if not self._check_ready():
+            return
+        with await self.pool as conn:
+            key = self._gen_key(key)
+            stored = await conn.execute('INCR', key)
+            if stored:
+                return stored
+
     async def set(self, key, val, ttl=None):
         if not self._check_ready():
             return
