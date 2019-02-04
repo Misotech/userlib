@@ -96,8 +96,8 @@ class Redis:
             key = self._gen_key(key)
             value = await conn.execute('INCR', key)
             if value:
-                if value == 1:
-                    await conn.execute('EXPIRE', key, seconds)
+                # if value == 1:
+                await conn.execute('EXPIRE', key, seconds)
                 return value
 
     async def expire(self, key, seconds):
