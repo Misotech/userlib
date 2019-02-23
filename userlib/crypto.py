@@ -13,12 +13,11 @@ JSK = ['nonce', 'header', 'ciphertext', 'tag']
 
 class Crypter:
     def __init__(self, token, header='re'):
-        self.token = token
+        self.token = token.encode()
         self.header = header.encode()
 
     def encode(self, msg):
         data = ujson.dumps(msg).encode()
-
         cipher = AES.new(self.token, AES.MODE_EAX)
         cipher.update(self.header)
         ciphertext, tag = cipher.encrypt_and_digest(data)
