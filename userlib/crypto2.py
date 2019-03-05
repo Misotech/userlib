@@ -10,7 +10,7 @@ class SimpleCrypt:
     def encrypt(self, struct):
         enc_data = ujson.dumps(struct).encode()
         encrypted = self.f.encrypt(enc_data)
-        return encrypted
+        return encrypted.decode()
 
     def decrypt(self, raw):
         decrypted = self.f.decrypt(raw)
