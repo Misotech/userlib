@@ -8,7 +8,7 @@ class SimpleCrypt:
         self.f = Fernet(key)
 
     def encrypt(self, struct):
-        enc_data = ujson.dumps(struct).encode()
+        enc_data = ujson.dumps(struct)
         encrypted = self.f.encrypt(enc_data)
         return encrypted.decode()
 
