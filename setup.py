@@ -28,6 +28,7 @@ setup(
         # crypto
         'base58',
         'pycryptodomex'
+        'cryptography>=2.6.1'
     ],
     # setup_requires=['pytest-runner', 'flake8'],
     # tests_require=['pytest', 'testfixtures']

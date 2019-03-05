@@ -3,13 +3,11 @@ import ujson
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
 
-
 def gen_key():
     return get_random_bytes(16)
 
 
 JSK = ['nonce', 'header', 'ciphertext', 'tag']
-
 
 class Crypter:
     def __init__(self, token, header='re'):
