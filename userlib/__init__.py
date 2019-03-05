@@ -5,4 +5,3 @@ from .clean import *
 
 def create_redis(*args, **kwargs) -> Redis:
     return Redis(*args, **kwargs)
-
