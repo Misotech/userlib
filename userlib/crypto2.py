@@ -14,6 +14,6 @@ class SimpleCrypt:
 
     def decrypt(self, raw):
         decrypted = self.f.decrypt(raw.encode())
-        struct = ujson.loads(decrypted).decode()
+        struct = ujson.loads(decrypted)
         return struct
 
