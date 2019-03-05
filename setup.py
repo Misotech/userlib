@@ -27,7 +27,7 @@ setup(
         'band',
         # crypto
         'base58',
-        'pycryptodomex'
+        'pycryptodomex',
         'cryptography>=2.6.1'
     ],
     # setup_requires=['pytest-runner', 'flake8'],
