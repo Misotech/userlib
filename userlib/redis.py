@@ -131,3 +131,20 @@ class Redis:
                 k.decode(),
                 v.decode(),
             ) for k, v in decode_dict(matches or [])]
+
+
+    async def sadd(self, key, val):
+        if not self._check_ready():
+            return
+        with await self.pool as conn:
+            key = self._gen_key(key)
+            return await conn.execute('SADD', key, val)
+
+
+    async def smembers(self, key):
+        if not self._check_ready():
+            return
+        with await self.pool as conn:
+            key = self._gen_key(key)
+            return await conn.execute('SMEMBERS', key)
+
