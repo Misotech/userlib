@@ -82,6 +82,38 @@ class Redis:
             key = self._gen_key(key)
             return await conn.execute('HSET', key, field, val)
 
+    async def hmset(self, key, *items):
+        if not self._check_ready():
+            return
+        with await self.pool as conn:
+            key = self._gen_key(key)
+            return await conn.execute('HMSET', key, *items)
+
+    async def hget(self, key, field):
+        if not self._check_ready():
+            return
+        with await self.pool as conn:
+            key = self._gen_key(key)
+            return await conn.execute('HGET', key, field)
+
+    def hmgetall(self, key):
+        """
+        DEPRECATED (WRONG)
+        TODO: Remove when possible
+        """
+        return self.hgetall(key)
+
+    async def hgetall(self, key):
+        if not self._check_ready():
+            return
+        with await self.pool as conn:
+            key = self._gen_key(key)
+            matches = await conn.execute('HGETALL', key)
+            return [(
+                k.decode(),
+                v.decode(),
+            ) for k, v in decode_dict(matches or [])]
+
     async def delete(self, key):
         if not self._check_ready():
             return
@@ -113,24 +145,6 @@ class Redis:
         with await self.pool as conn:
             key = self._gen_key(key)
             return await conn.execute('TTL', key)
-
-    async def hmset(self, key, *items):
-        if not self._check_ready():
-            return
-        with await self.pool as conn:
-            key = self._gen_key(key)
-            return await conn.execute('HMSET', key, *items)
-
-    async def hmgetall(self, key):
-        if not self._check_ready():
-            return
-        with await self.pool as conn:
-            key = self._gen_key(key)
-            matches = await conn.execute('HGETALL', key)
-            return [(
-                k.decode(),
-                v.decode(),
-            ) for k, v in decode_dict(matches or [])]
 
 
     async def sadd(self, key, val):
