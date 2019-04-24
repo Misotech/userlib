@@ -1,6 +1,5 @@
 import ujson
 
-
 class AuthStoreRedis:
     def __init__(self, redis, key):
         self.redis = redis
@@ -16,3 +15,4 @@ class AuthStoreRedis:
 
     async def delete(self):
         await self.redis.delete(self.key)
+

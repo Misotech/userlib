@@ -24,7 +24,7 @@ setup(
     install_requires=[
         # common
         'ujson',
-        'band',
+        # 'band',
         # crypto
         'base58',
         # 'pycryptodomex',

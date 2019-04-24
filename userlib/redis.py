@@ -162,3 +162,8 @@ class Redis:
             key = self._gen_key(key)
             return await conn.execute('SMEMBERS', key)
 
+
+
+def create_redis(*args, **kwargs) -> Redis:
+    return Redis(*args, **kwargs)
+
